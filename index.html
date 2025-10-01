@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDoリスト</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-tasks"></i> ToDoリスト</h1>
+            <p>タスクを管理して生産性を向上させましょう</p>
+        </header>
+
+        <div class="todo-form">
+            <div class="input-group">
+                <input type="text" id="todoInput" placeholder="新しいタスクを入力してください..." maxlength="100">
+                <button id="addBtn" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> 追加
+                </button>
+            </div>
+        </div>
+
+        <div class="filter-tabs">
+            <button class="filter-btn active" data-filter="all">
+                <i class="fas fa-list"></i> すべて
+            </button>
+            <button class="filter-btn" data-filter="active">
+                <i class="fas fa-clock"></i> 未完了
+            </button>
+            <button class="filter-btn" data-filter="completed">
+                <i class="fas fa-check"></i> 完了済み
+            </button>
+        </div>
+
+        <div class="todo-stats">
+            <span id="totalCount">0</span> 件中 <span id="completedCount">0</span> 件完了
+        </div>
+
+        <div class="todo-list" id="todoList">
+            <!-- ToDoアイテムがここに動的に追加されます -->
+        </div>
+
+        <div class="empty-state" id="emptyState">
+            <i class="fas fa-clipboard-list"></i>
+            <h3>タスクがありません</h3>
+            <p>新しいタスクを追加して始めましょう！</p>
+        </div>
+
+        <div class="actions">
+            <button id="clearCompleted" class="btn btn-secondary">
+                <i class="fas fa-trash"></i> 完了済みを削除
+            </button>
+            <button id="clearAll" class="btn btn-danger">
+                <i class="fas fa-trash-alt"></i> すべて削除
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
