@@ -1,362 +1,64 @@
-/* =========================
-   Classic Luxury ToDo UI
-========================= */
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDoリスト</title>
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&display=swap');
+    <link rel="stylesheet" href="./style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-:root {
-    --bg-dark: #17120d;
-    --bg-brown: #2a2118;
-    --card: rgba(38, 30, 22, 0.92);
-    --card-light: #34281d;
-    --gold: #c8a45d;
-    --gold-light: #e6cf8b;
-    --text-main: #f4ead8;
-    --text-sub: #b8aa92;
-    --line: rgba(200, 164, 93, 0.35);
-    --danger: #8f3d35;
-    --danger-light: #b85449;
-    --shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-}
+    <script defer src="./script.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-feather-alt"></i> ToDoリスト</h1>
+            <p>今日やることを、静かに美しく整える</p>
+        </header>
 
-* {
-    box-sizing: border-box;
-}
+        <div class="todo-form">
+            <div class="input-group">
+                <input type="text" id="todoInput" placeholder="新しいタスクを入力してください..." maxlength="100">
+                <button id="addBtn" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> 追加
+                </button>
+            </div>
+        </div>
 
-body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: "Noto Serif JP", serif;
-    color: var(--text-main);
-    background:
-        radial-gradient(circle at top, rgba(200, 164, 93, 0.18), transparent 32%),
-        linear-gradient(135deg, #120d09 0%, #2a2118 48%, #0e0a07 100%);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 48px 18px;
-}
+        <div class="filter-tabs">
+            <button class="filter-btn active" data-filter="all">
+                <i class="fas fa-list"></i> すべて
+            </button>
+            <button class="filter-btn" data-filter="active">
+                <i class="fas fa-clock"></i> 未完了
+            </button>
+            <button class="filter-btn" data-filter="completed">
+                <i class="fas fa-check"></i> 完了済み
+            </button>
+        </div>
 
-/* 全体カード */
-.container {
-    width: 100%;
-    max-width: 760px;
-    padding: 42px;
-    background:
-        linear-gradient(180deg, rgba(58, 45, 31, 0.96), rgba(28, 21, 15, 0.96));
-    border: 1px solid var(--line);
-    border-radius: 26px;
-    box-shadow: var(--shadow);
-    position: relative;
-    overflow: hidden;
-}
+        <div class="todo-stats">
+            <span id="totalCount">0</span> 件中 <span id="completedCount">0</span> 件完了
+        </div>
 
-/* 金の細枠 */
-.container::before {
-    content: "";
-    position: absolute;
-    inset: 14px;
-    border: 1px solid rgba(230, 207, 139, 0.25);
-    border-radius: 20px;
-    pointer-events: none;
-}
+        <div class="todo-list" id="todoList"></div>
 
-/* ヘッダー */
-header {
-    text-align: center;
-    margin-bottom: 34px;
-    position: relative;
-    z-index: 1;
-}
+        <div class="empty-state" id="emptyState">
+            <i class="fas fa-clipboard-list"></i>
+            <h3>タスクがありません</h3>
+            <p>新しいタスクを追加して始めましょう！</p>
+        </div>
 
-header h1 {
-    margin: 0;
-    font-family: "Cormorant Garamond", "Noto Serif JP", serif;
-    font-size: 46px;
-    letter-spacing: 0.06em;
-    font-weight: 700;
-    color: var(--gold-light);
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
-}
-
-header h1 i {
-    font-size: 32px;
-    margin-right: 10px;
-    color: var(--gold);
-}
-
-header p {
-    margin-top: 10px;
-    color: var(--text-sub);
-    font-size: 14px;
-    letter-spacing: 0.08em;
-}
-
-/* 入力フォーム */
-.todo-form {
-    position: relative;
-    z-index: 1;
-    margin-bottom: 24px;
-}
-
-.input-group {
-    display: flex;
-    gap: 12px;
-    background: rgba(16, 12, 8, 0.55);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 10px;
-}
-
-#todoInput {
-    flex: 1;
-    border: none;
-    outline: none;
-    background: transparent;
-    color: var(--text-main);
-    font-size: 16px;
-    padding: 14px 16px;
-    font-family: "Noto Serif JP", serif;
-}
-
-#todoInput::placeholder {
-    color: rgba(244, 234, 216, 0.45);
-}
-
-/* ボタン共通 */
-.btn,
-.filter-btn {
-    border: none;
-    cursor: pointer;
-    font-family: "Noto Serif JP", serif;
-    transition: all 0.25s ease;
-    white-space: nowrap;
-}
-
-.btn {
-    border-radius: 12px;
-    padding: 13px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-}
-
-/* 追加ボタン */
-.btn-primary {
-    color: #1b130b;
-    background: linear-gradient(135deg, var(--gold-light), var(--gold));
-    box-shadow: 0 10px 24px rgba(200, 164, 93, 0.22);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 30px rgba(200, 164, 93, 0.32);
-}
-
-/* フィルター */
-.filter-tabs {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    gap: 10px;
-    margin: 22px 0;
-    padding: 8px;
-    background: rgba(14, 10, 7, 0.45);
-    border: 1px solid rgba(200, 164, 93, 0.18);
-    border-radius: 16px;
-}
-
-.filter-btn {
-    flex: 1;
-    padding: 12px 10px;
-    border-radius: 12px;
-    background: transparent;
-    color: var(--text-sub);
-    font-size: 14px;
-}
-
-.filter-btn:hover {
-    color: var(--gold-light);
-    background: rgba(200, 164, 93, 0.08);
-}
-
-.filter-btn.active {
-    color: #1b130b;
-    background: linear-gradient(135deg, var(--gold-light), var(--gold));
-    font-weight: 700;
-}
-
-/* ステータス */
-.todo-stats {
-    position: relative;
-    z-index: 1;
-    text-align: right;
-    color: var(--text-sub);
-    font-size: 14px;
-    margin-bottom: 18px;
-}
-
-.todo-stats span {
-    color: var(--gold-light);
-    font-weight: 700;
-}
-
-/* ToDoリスト */
-.todo-list {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-/* JSで追加されるtodo item想定 */
-.todo-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 18px 18px;
-    background: linear-gradient(180deg, rgba(65, 50, 34, 0.85), rgba(33, 25, 18, 0.9));
-    border: 1px solid rgba(200, 164, 93, 0.22);
-    border-radius: 16px;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
-    transition: all 0.25s ease;
-}
-
-.todo-item:hover {
-    transform: translateY(-2px);
-    border-color: rgba(230, 207, 139, 0.45);
-}
-
-.todo-item.completed {
-    opacity: 0.58;
-}
-
-.todo-item.completed .todo-text {
-    text-decoration: line-through;
-    color: var(--text-sub);
-}
-
-.todo-checkbox {
-    width: 20px;
-    height: 20px;
-    accent-color: var(--gold);
-    cursor: pointer;
-}
-
-.todo-text {
-    flex: 1;
-    color: var(--text-main);
-    font-size: 16px;
-    line-height: 1.6;
-}
-
-.delete-btn {
-    background: transparent;
-    color: var(--text-sub);
-    border: 1px solid rgba(200, 164, 93, 0.22);
-    border-radius: 10px;
-    padding: 8px 10px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-}
-
-.delete-btn:hover {
-    color: #fff;
-    background: var(--danger);
-    border-color: var(--danger-light);
-}
-
-/* 空の状態 */
-.empty-state {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    padding: 48px 20px;
-    color: var(--text-sub);
-    border: 1px dashed rgba(200, 164, 93, 0.32);
-    border-radius: 18px;
-    background: rgba(14, 10, 7, 0.28);
-}
-
-.empty-state i {
-    font-size: 44px;
-    color: var(--gold);
-    margin-bottom: 16px;
-}
-
-.empty-state h3 {
-    margin: 0 0 8px;
-    color: var(--gold-light);
-    font-size: 22px;
-    font-weight: 600;
-}
-
-.empty-state p {
-    margin: 0;
-    font-size: 14px;
-}
-
-/* 下部アクション */
-.actions {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 28px;
-}
-
-.btn-secondary {
-    color: var(--text-main);
-    background: rgba(244, 234, 216, 0.08);
-    border: 1px solid rgba(244, 234, 216, 0.18);
-}
-
-.btn-secondary:hover {
-    background: rgba(244, 234, 216, 0.15);
-    transform: translateY(-2px);
-}
-
-.btn-danger {
-    color: #fff;
-    background: linear-gradient(135deg, var(--danger-light), var(--danger));
-    border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.btn-danger:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.08);
-}
-
-/* スマホ対応 */
-@media (max-width: 640px) {
-    body {
-        padding: 24px 12px;
-    }
-
-    .container {
-        padding: 32px 20px;
-        border-radius: 22px;
-    }
-
-    header h1 {
-        font-size: 36px;
-    }
-
-    .input-group {
-        flex-direction: column;
-    }
-
-    .filter-tabs {
-        flex-direction: column;
-    }
-
-    .actions {
-        flex-direction: column;
-    }
-
-    .btn {
-        width: 100%;
-    }
-}
+        <div class="actions">
+            <button id="clearCompleted" class="btn btn-secondary">
+                <i class="fas fa-trash"></i> 完了済みを削除
+            </button>
+            <button id="clearAll" class="btn btn-danger">
+                <i class="fas fa-trash-alt"></i> すべて削除
+            </button>
+        </div>
+    </div>
+</body>
+</html>
